@@ -1,15 +1,14 @@
-from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
-from rest_framework.response import Response
 from rest_framework.views import APIView
 from django.db.models import Q
-from decimal import Decimal
-from .models import Product, Category
-from .serializers import ProductSerializer
+from common.views import BasePagination
+from product_management.models import Product
+from product_management.serializers import ProductSerializer
 
 
 class ProductListView(APIView):
     permission_classes = [IsAuthenticated]
+    pagination_class = BasePagination
 
     def get(self, request):
         products = Product.objects.filter(is_active=True, is_deleted=False)
@@ -27,7 +26,9 @@ class ProductListView(APIView):
             except (ValueError, TypeError):
                 pass
 
+        paginator = self.pagination_class()
+        paginated_products = paginator.paginate_queryset(products, request)
         serializer = ProductSerializer(
-            products, many=True, context={"request": request}
+            paginated_products, many=True, context={"request": request}
         )
-        return Response(serializer.data, status=status.HTTP_200_OK)
+        return paginator.get_paginated_response(serializer.data)
