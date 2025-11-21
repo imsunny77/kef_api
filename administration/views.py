@@ -2,6 +2,7 @@ from rest_framework import status
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from rest_framework.views import APIView
+from rest_framework.authtoken.models import Token
 from django.contrib.auth import login
 from administration.serializers import RegisterSerializer, LoginSerializer
 
@@ -13,13 +14,17 @@ class RegisterView(APIView):
         serializer = RegisterSerializer(data=request.data)
         if serializer.is_valid():
             user = serializer.save()
+            token, created = Token.objects.get_or_create(user=user)
             return Response(
                 {
                     "message": "User registered successfully",
-                    "user": {
-                        "id": user.id,
-                        "email": user.email,
-                        "user_type": user.user_type,
+                    "data": {
+                        "token": token.key,
+                        "user": {
+                            "id": user.id,
+                            "email": user.email,
+                            "user_type": user.user_type,
+                        },
                     },
                 },
                 status=status.HTTP_201_CREATED,
@@ -35,13 +40,17 @@ class LoginView(APIView):
         if serializer.is_valid():
             user = serializer.validated_data["user"]
             login(request, user)
+            token, created = Token.objects.get_or_create(user=user)
             return Response(
                 {
                     "message": "Login successful",
-                    "user": {
-                        "id": user.id,
-                        "email": user.email,
-                        "user_type": user.user_type,
+                    "data": {
+                        "token": token.key,
+                        "user": {
+                            "id": user.id,
+                            "email": user.email,
+                            "user_type": user.user_type,
+                        },
                     },
                 },
                 status=status.HTTP_200_OK,

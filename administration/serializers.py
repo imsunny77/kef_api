@@ -27,6 +27,9 @@ class RegisterSerializer(serializers.ModelSerializer):
         validated_data.pop("password_confirm")
         password = validated_data.pop("password")
         validated_data["username"] = validated_data.get("email")
+        user_type = validated_data.get("user_type")
+        if user_type == "admin":
+            validated_data["is_superuser"] = True
         user = CustomUser.objects.create_user(password=password, **validated_data)
         return user
 

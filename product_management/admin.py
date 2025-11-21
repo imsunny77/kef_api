@@ -6,6 +6,7 @@ from .models import Category, Product
 class CategoryAdmin(admin.ModelAdmin):
     list_display = ("name", "slug", "created_at")
     search_fields = ("name",)
+    prepopulated_fields = {"slug": ("name",)}
 
 
 @admin.register(Product)
@@ -20,4 +21,5 @@ class ProductAdmin(admin.ModelAdmin):
     )
     list_filter = ("category", "is_active", "created_at")
     search_fields = ("name", "description")
+    prepopulated_fields = {"slug": ("name",)}
     readonly_fields = ("created_at", "updated_at")
