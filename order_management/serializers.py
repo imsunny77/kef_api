@@ -86,10 +86,16 @@ class OrderCreateSerializer(serializers.Serializer):
         order = Order.objects.create(customer=customer, **validated_data)
 
         for item_data in items_data:
+            product = item_data["product"]
+            quantity = item_data["quantity"]
+            
+            product.stock_quantity -= quantity
+            product.save()
+            
             OrderItem.objects.create(
                 order=order,
-                product=item_data["product"],
-                quantity=item_data["quantity"],
+                product=product,
+                quantity=quantity,
                 price=item_data["price"],
             )
 

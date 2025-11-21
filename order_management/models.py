@@ -38,7 +38,29 @@ class Order(BaseModel):
     def save(self, *args, **kwargs):
         if not self.order_number:
             self.order_number = f"ORD-{int(time.time())}"
+        
+        if self.pk:
+            try:
+                old_order = Order.objects.get(pk=self.pk)
+                if old_order.status != "cancelled" and self.status == "cancelled":
+                    self._restore_stock()
+                elif old_order.status == "cancelled" and self.status != "cancelled":
+                    self._decrement_stock()
+            except Order.DoesNotExist:
+                pass
+        
         super().save(*args, **kwargs)
+    
+    def _restore_stock(self):
+        for item in self.items.all():
+            item.product.stock_quantity += item.quantity
+            item.product.save()
+    
+    def _decrement_stock(self):
+        for item in self.items.all():
+            if item.product.stock_quantity >= item.quantity:
+                item.product.stock_quantity -= item.quantity
+                item.product.save()
 
     def calculate_total(self):
         total = sum(item.subtotal for item in self.items.all())
@@ -63,6 +85,23 @@ class OrderItem(BaseModel):
         )
 
     def save(self, *args, **kwargs):
+        if self.pk:
+            try:
+                old_item = OrderItem.objects.get(pk=self.pk)
+                if old_item.quantity != self.quantity:
+                    old_item.product.stock_quantity += old_item.quantity
+                    if old_item.product.stock_quantity >= self.quantity:
+                        old_item.product.stock_quantity -= self.quantity
+                    old_item.product.save()
+            except OrderItem.DoesNotExist:
+                pass
+        
         self.subtotal = self.price * self.quantity
         super().save(*args, **kwargs)
         self.order.calculate_total()
+    
+    def delete(self, *args, **kwargs):
+        if self.order.status != "cancelled":
+            self.product.stock_quantity += self.quantity
+            self.product.save()
+        super().delete(*args, **kwargs)

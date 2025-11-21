@@ -1,19 +1,5 @@
-"""
-Simple script to add dummy product data.
-Run with: python add_dummy_products.py
-"""
-
-import os
-import sys
-import django
 import random
 from decimal import Decimal
-
-# Setup Django
-sys.path.append(os.path.dirname(os.path.abspath(__file__)))
-os.environ.setdefault("DJANGO_SETTINGS_MODULE", "kef_api.settings")
-django.setup()
-
 from product_management.models import Category, Product
 
 # Configuration
