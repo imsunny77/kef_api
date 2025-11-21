@@ -1,0 +1,42 @@
+# Python cache
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual environments
+env/
+venv/
+.venv/
+
+# Django-related
+*.log
+*.pot
+*.pyc
+db.sqlite3
+media/
+staticfiles/
+static/
+
+# Local settings (never commit secrets)
+**/settings_local.py
+**/local_settings.py
+.env
+*.env
+
+# Pytest / Coverage
+.coverage
+htmlcov/
+.pytest_cache/
+
+# IDE specific
+.vscode/
+.idea/
+
+# Byte-compiled / packaging
+build/
+dist/
+*.egg-info/
+
+# OS artifacts
+.DS_Store
+Thumbs.db
