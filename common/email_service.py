@@ -113,3 +113,4 @@ def send_order_status_update_email(order, old_status=None):
         print(f"Error sending order status update email: {str(e)}")
         return False
 
+
