@@ -8,13 +8,13 @@ from django.views.decorators.csrf import csrf_exempt
 from django.utils.decorators import method_decorator
 from django.http import JsonResponse
 import stripe
-import os
+from decouple import config
 import requests
 from order_management.models import Order
 from order_management.serializers import OrderSerializer
 from order_management.stripe_service import confirm_payment_intent, create_customer, create_payment_intent
 
-stripe.api_key = os.environ.get("STRIPE_SECRET_KEY", "")
+stripe.api_key = config("STRIPE_SECRET_KEY", default="")
 
 
 def sync_to_crm(order):
@@ -158,7 +158,7 @@ class StripeWebhookView(APIView):
     def post(self, request):
         payload = request.body
         sig_header = request.META.get("HTTP_STRIPE_SIGNATURE")
-        webhook_secret = os.environ.get("STRIPE_WEBHOOK_SECRET", "")
+        webhook_secret = config("STRIPE_WEBHOOK_SECRET", default="")
 
         try:
             event = stripe.Webhook.construct_event(payload, sig_header, webhook_secret)

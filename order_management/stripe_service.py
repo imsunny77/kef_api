@@ -1,8 +1,8 @@
 import stripe
-import os
+from decouple import config
 from decimal import Decimal
 
-stripe.api_key = os.environ.get("STRIPE_SECRET_KEY", "")
+stripe.api_key = config("STRIPE_SECRET_KEY", default="")
 
 
 def create_customer(email, name=None):
