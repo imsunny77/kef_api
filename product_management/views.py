@@ -5,6 +5,7 @@ from rest_framework.views import APIView
 from rest_framework.exceptions import PermissionDenied
 from django.shortcuts import get_object_or_404
 from django.db.models import Q
+from collections import defaultdict
 from common.views import BasePagination
 from product_management.models import Product, Category
 from product_management.serializers import ProductSerializer, CategorySerializer
@@ -15,8 +16,10 @@ class ProductListView(APIView):
     pagination_class = BasePagination
 
     def get(self, request):
-        products = Product.objects.select_related("category").filter(
-            is_active=True, is_deleted=False
+        products = (
+            Product.objects.select_related("category")
+            .order_by("category__name", "name")
+            .filter(is_active=True, is_deleted=False)
         )
 
         search = request.query_params.get("search", None)
