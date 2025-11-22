@@ -1,0 +1,25 @@
+[Unit]
+Description=gunicorn daemon for kef_api Django project
+Requires=gunicorn.socket
+After=network.target
+
+[Service]
+User=www-data
+Group=www-data
+RuntimeDirectory=gunicorn
+WorkingDirectory=/path/to/kef_api
+ExecStart=/path/to/kef_api/venv/bin/gunicorn \
+          --access-logfile - \
+          --workers 3 \
+          --bind unix:/run/gunicorn.sock \
+          kef_api.wsgi:application
+Restart=always
+RestartSec=3
+
+# Environment variables
+Environment="PATH=/path/to/kef_api/venv/bin"
+EnvironmentFile=/path/to/kef_api/.env
+
+[Install]
+WantedBy=multi-user.target
+
