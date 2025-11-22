@@ -2,7 +2,7 @@ from rest_framework import status
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from rest_framework.authtoken.models import Token
+from rest_framework_simplejwt.tokens import RefreshToken
 from django.contrib.auth import login
 from administration.serializers import RegisterSerializer, LoginSerializer
 
@@ -14,12 +14,13 @@ class RegisterView(APIView):
         serializer = RegisterSerializer(data=request.data)
         if serializer.is_valid():
             user = serializer.save()
-            token, created = Token.objects.get_or_create(user=user)
+            refresh = RefreshToken.for_user(user)
             return Response(
                 {
                     "message": "User registered successfully",
                     "data": {
-                        "token": token.key,
+                        "access_token": str(refresh.access_token),
+                        "refresh_token": str(refresh),
                         "user": {
                             "id": user.id,
                             "email": user.email,
@@ -40,12 +41,13 @@ class LoginView(APIView):
         if serializer.is_valid():
             user = serializer.validated_data["user"]
             login(request, user)
-            token, created = Token.objects.get_or_create(user=user)
+            refresh = RefreshToken.for_user(user)
             return Response(
                 {
                     "message": "Login successful",
                     "data": {
-                        "token": token.key,
+                        "access_token": str(refresh.access_token),
+                        "refresh_token": str(refresh),
                         "user": {
                             "id": user.id,
                             "email": user.email,
