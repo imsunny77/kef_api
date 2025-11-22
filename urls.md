@@ -121,9 +121,102 @@ Authorization: Bearer <your_access_token_here>
 
 ---
 
+### 4. Get User Profile
+**Endpoint:** `GET /api/v1/auth/profile/`  
+**Authentication:** Required
+
+**Response (200 OK):**
+```json
+{
+  "id": 1,
+  "email": "user@example.com",
+  "username": "user@example.com",
+  "first_name": "John",
+  "last_name": "Doe",
+  "user_type": "customer",
+  "date_joined": "2024-01-01T00:00:00Z"
+}
+```
+
+---
+
+### 5. Update User Profile
+**Endpoint:** `PUT /api/v1/auth/profile/` or `PATCH /api/v1/auth/profile/`  
+**Authentication:** Required
+
+**Request Payload (PATCH - partial update):**
+```json
+{
+  "email": "newemail@example.com",
+  "first_name": "Jane",
+  "last_name": "Smith"
+}
+```
+
+**Response (200 OK):**
+```json
+{
+  "id": 1,
+  "email": "newemail@example.com",
+  "username": "newemail@example.com",
+  "first_name": "Jane",
+  "last_name": "Smith",
+  "user_type": "customer",
+  "date_joined": "2024-01-01T00:00:00Z"
+}
+```
+
+**Error Response (400 Bad Request):**
+```json
+{
+  "email": ["This email is already in use."]
+}
+```
+
+**Note:** When updating email, the username is automatically synced to match the new email address.
+
+---
+
+### 6. Change Password
+**Endpoint:** `POST /api/v1/auth/change-password/`  
+**Authentication:** Required
+
+**Request Payload:**
+```json
+{
+  "old_password": "oldpassword123",
+  "new_password": "newpassword123",
+  "new_password_confirm": "newpassword123"
+}
+```
+
+**Response (200 OK):**
+```json
+{
+  "message": "Password changed successfully"
+}
+```
+
+**Error Response (400 Bad Request):**
+```json
+{
+  "old_password": ["Old password is incorrect"]
+}
+```
+
+or
+
+```json
+{
+  "new_password": ["New passwords do not match"]
+}
+```
+
+---
+
 ## Product Management Endpoints
 
-### 4. List Products
+### 7. List Products
 **Endpoint:** `GET /api/v1/products/`  
 **Authentication:** Required
 
@@ -166,7 +259,7 @@ Authorization: Bearer <your_access_token_here>
 
 ---
 
-### 5. Create Product
+### 8. Create Product
 **Endpoint:** `POST /api/v1/products/`  
 **Authentication:** Required (Admin only)
 
@@ -213,7 +306,7 @@ Authorization: Bearer <your_access_token_here>
 
 ---
 
-### 6. Get Product Detail
+### 9. Get Product Detail
 **Endpoint:** `GET /api/v1/products/<id>/`  
 **Authentication:** Required
 
@@ -248,7 +341,7 @@ Authorization: Bearer <your_access_token_here>
 
 ---
 
-### 7. Update Product
+### 10. Update Product
 **Endpoint:** `PUT /api/v1/products/<id>/` or `PATCH /api/v1/products/<id>/`  
 **Authentication:** Required (Admin only)
 
@@ -291,7 +384,7 @@ Authorization: Bearer <your_access_token_here>
 
 ---
 
-### 8. Delete Product
+### 11. Delete Product
 **Endpoint:** `DELETE /api/v1/products/<id>/`  
 **Authentication:** Required (Admin only)
 
@@ -313,7 +406,7 @@ Authorization: Bearer <your_access_token_here>
 
 ## Category Management Endpoints
 
-### 9. List Categories
+### 12. List Categories
 **Endpoint:** `GET /api/v1/categories/`  
 **Authentication:** Required
 
@@ -340,7 +433,7 @@ Authorization: Bearer <your_access_token_here>
 
 ---
 
-### 10. Create Category
+### 13. Create Category
 **Endpoint:** `POST /api/v1/categories/`  
 **Authentication:** Required (Admin only)
 
@@ -371,7 +464,7 @@ Authorization: Bearer <your_access_token_here>
 
 ---
 
-### 11. Get Category Detail
+### 14. Get Category Detail
 **Endpoint:** `GET /api/v1/categories/<id>/`  
 **Authentication:** Required
 
@@ -387,7 +480,7 @@ Authorization: Bearer <your_access_token_here>
 
 ---
 
-### 12. Update Category
+### 15. Update Category
 **Endpoint:** `PUT /api/v1/categories/<id>/` or `PATCH /api/v1/categories/<id>/`  
 **Authentication:** Required (Admin only)
 
@@ -410,7 +503,7 @@ Authorization: Bearer <your_access_token_here>
 
 ---
 
-### 13. Delete Category
+### 16. Delete Category
 **Endpoint:** `DELETE /api/v1/categories/<id>/`  
 **Authentication:** Required (Admin only)
 
@@ -425,7 +518,7 @@ Authorization: Bearer <your_access_token_here>
 
 ## Order Management Endpoints
 
-### 14. List Orders
+### 17. List Orders
 **Endpoint:** `GET /api/v1/orders/`  
 **Authentication:** Required
 
@@ -482,7 +575,7 @@ Authorization: Bearer <your_access_token_here>
 
 ---
 
-### 15. Create Order
+### 18. Create Order
 **Endpoint:** `POST /api/v1/orders/`  
 **Authentication:** Required
 
@@ -563,7 +656,7 @@ Authorization: Bearer <your_access_token_here>
 
 ---
 
-### 16. Get Order Detail
+### 19. Get Order Detail
 **Endpoint:** `GET /api/v1/orders/<id>/`  
 **Authentication:** Required
 
@@ -625,7 +718,7 @@ Authorization: Bearer <your_access_token_here>
 
 ---
 
-### 17. Update Order
+### 20. Update Order
 **Endpoint:** `PUT /api/v1/orders/<id>/` or `PATCH /api/v1/orders/<id>/`  
 **Authentication:** Required
 
@@ -670,7 +763,7 @@ Authorization: Bearer <your_access_token_here>
 
 ---
 
-### 18. Delete Order
+### 21. Delete Order
 **Endpoint:** `DELETE /api/v1/orders/<id>/`  
 **Authentication:** Required
 
@@ -696,7 +789,7 @@ Authorization: Bearer <your_access_token_here>
 
 ## Payment Endpoints
 
-### 19. Create Payment Intent
+### 22. Create Payment Intent
 **Endpoint:** `POST /api/v1/orders/<order_id>/create-payment/`  
 **Authentication:** Required
 
@@ -729,7 +822,7 @@ Authorization: Bearer <your_access_token_here>
 
 ---
 
-### 20. Confirm Payment
+### 23. Confirm Payment
 **Endpoint:** `POST /api/v1/orders/<order_id>/confirm-payment/`  
 **Authentication:** Required
 
@@ -779,7 +872,7 @@ or
 
 ---
 
-### 21. Stripe Webhook
+### 24. Stripe Webhook
 **Endpoint:** `POST /api/v1/webhooks/stripe/`  
 **Authentication:** Not required (uses Stripe signature verification)
 
@@ -819,9 +912,297 @@ or
 
 ---
 
+## Cart Management Endpoints
+
+### 26. Get Cart
+**Endpoint:** `GET /api/v1/cart/`  
+**Authentication:** Required
+
+**Response (200 OK):**
+```json
+{
+  "id": 1,
+  "items": [
+    {
+      "id": 1,
+      "product": {
+        "id": 1,
+        "name": "Laptop",
+        "slug": "laptop",
+        "description": "High-performance laptop",
+        "category": {
+          "id": 1,
+          "name": "Electronics",
+          "slug": "electronics",
+          "description": "Electronic devices"
+        },
+        "price": "999.99",
+        "stock_quantity": 50,
+        "image": null,
+        "created_at": "2024-01-01T00:00:00Z",
+        "updated_at": "2024-01-01T00:00:00Z"
+      },
+      "quantity": 2,
+      "price": "999.99",
+      "subtotal": "1999.98",
+      "created_at": "2024-01-01T00:00:00Z"
+    }
+  ],
+  "total_amount": "1999.98",
+  "created_at": "2024-01-01T00:00:00Z",
+  "updated_at": "2024-01-01T00:00:00Z"
+}
+```
+
+---
+
+### 27. Add Item to Cart
+**Endpoint:** `POST /api/v1/cart/`  
+**Authentication:** Required
+
+**Request Payload:**
+```json
+{
+  "product_id": 1,
+  "quantity": 2
+}
+```
+
+**Response (201 Created):**
+```json
+{
+  "id": 1,
+  "product": {
+    "id": 1,
+    "name": "Laptop",
+    "slug": "laptop",
+    "description": "High-performance laptop",
+    "category": {
+      "id": 1,
+      "name": "Electronics",
+      "slug": "electronics",
+      "description": "Electronic devices"
+    },
+    "price": "999.99",
+    "stock_quantity": 48,
+    "image": null,
+    "created_at": "2024-01-01T00:00:00Z",
+    "updated_at": "2024-01-01T00:00:00Z"
+  },
+  "quantity": 2,
+  "price": "999.99",
+  "subtotal": "1999.98",
+  "created_at": "2024-01-01T00:00:00Z"
+}
+```
+
+**Error Response (400 Bad Request):**
+```json
+{
+  "product_id": ["Product not found or inactive"]
+}
+```
+
+or
+
+```json
+{
+  "non_field_errors": ["Insufficient stock"]
+}
+```
+
+**Note:** If the product already exists in the cart, the quantity will be updated by adding the new quantity to the existing quantity.
+
+---
+
+### 28. Clear Cart
+**Endpoint:** `DELETE /api/v1/cart/`  
+**Authentication:** Required
+
+**Response (200 OK):**
+```json
+{
+  "message": "Cart cleared successfully"
+}
+```
+
+---
+
+### 29. Update Cart Item
+**Endpoint:** `PUT /api/v1/cart/items/<id>/` or `PATCH /api/v1/cart/items/<id>/`  
+**Authentication:** Required
+
+**Request Payload:**
+```json
+{
+  "quantity": 3
+}
+```
+
+**Response (200 OK):**
+```json
+{
+  "id": 1,
+  "product": {
+    "id": 1,
+    "name": "Laptop",
+    "slug": "laptop",
+    "description": "High-performance laptop",
+    "category": {
+      "id": 1,
+      "name": "Electronics",
+      "slug": "electronics",
+      "description": "Electronic devices"
+    },
+    "price": "999.99",
+    "stock_quantity": 47,
+    "image": null,
+    "created_at": "2024-01-01T00:00:00Z",
+    "updated_at": "2024-01-01T00:00:00Z"
+  },
+  "quantity": 3,
+  "price": "999.99",
+  "subtotal": "2999.97",
+  "created_at": "2024-01-01T00:00:00Z"
+}
+```
+
+**Error Response (400 Bad Request):**
+```json
+{
+  "quantity": ["This field is required."]
+}
+```
+
+or
+
+```json
+{
+  "quantity": ["Quantity must be at least 1."]
+}
+```
+
+or
+
+```json
+{
+  "error": "Insufficient stock"
+}
+```
+
+**Error Response (404 Not Found):**
+```json
+{
+  "detail": "Not found."
+}
+```
+
+---
+
+### 30. Remove Cart Item
+**Endpoint:** `DELETE /api/v1/cart/items/<id>/`  
+**Authentication:** Required
+
+**Response (200 OK):**
+```json
+{
+  "message": "Cart item removed successfully"
+}
+```
+
+**Error Response (404 Not Found):**
+```json
+{
+  "detail": "Not found."
+}
+```
+
+---
+
+### 31. Cart Checkout
+**Endpoint:** `POST /api/v1/cart/checkout/`  
+**Authentication:** Required
+
+**Request Payload:**
+```json
+{
+  "shipping_address": "123 Main St, City, State, ZIP",
+  "billing_address": "123 Main St, City, State, ZIP",
+  "clear_cart": true
+}
+```
+
+**Response (201 Created):**
+```json
+{
+  "id": 1,
+  "order_number": "ORD-1704067200",
+  "customer": 1,
+  "customer_email": "user@example.com",
+  "total_amount": "1999.98",
+  "status": "pending",
+  "shipping_address": "123 Main St, City, State, ZIP",
+  "billing_address": "123 Main St, City, State, ZIP",
+  "items": [
+    {
+      "id": 1,
+      "product": {
+        "id": 1,
+        "name": "Laptop",
+        "slug": "laptop",
+        "description": "High-performance laptop",
+        "category": {
+          "id": 1,
+          "name": "Electronics",
+          "slug": "electronics",
+          "description": "Electronic devices"
+        },
+        "price": "999.99",
+        "stock_quantity": 48,
+        "image": null,
+        "created_at": "2024-01-01T00:00:00Z",
+        "updated_at": "2024-01-01T00:00:00Z"
+      },
+      "quantity": 2,
+      "price": "999.99",
+      "subtotal": "1999.98",
+      "created_at": "2024-01-01T00:00:00Z"
+    }
+  ],
+  "stripe_payment_intent_id": null,
+  "client_secret": null,
+  "crm_sync_status": null,
+  "created_at": "2024-01-01T00:00:00Z",
+  "updated_at": "2024-01-01T00:00:00Z"
+}
+```
+
+**Error Response (400 Bad Request):**
+```json
+{
+  "error": "Cart is empty"
+}
+```
+
+or
+
+```json
+{
+  "error": "Insufficient stock for Laptop"
+}
+```
+
+**Note:** 
+- Creates an order from all items in the cart
+- Updates product stock quantities
+- Optionally clears the cart after checkout (default: true)
+- If any product has insufficient stock, the order creation is rolled back
+
+---
+
 ## Reports Endpoints
 
-### 22. Reports Summary
+### 32. Reports Summary
 **Endpoint:** `GET /api/v1/reports/summary/`  
 **Authentication:** Required (Admin only)
 
