@@ -1,0 +1,27 @@
+{% extends "admin/index.html" %}
+{% load i18n static %}
+
+{% block content %}
+{{ block.super }}
+
+<div class="module">
+    <table>
+        <caption>
+            <a href="{% url 'admin:order_management_reports' %}" class="section" style="font-size: 14px; font-weight: bold; color: #417690; text-decoration: none;">
+                📊 Order Reports Summary
+            </a>
+        </caption>
+        <tr>
+            <th scope="row">
+                <a href="{% url 'admin:order_management_reports' %}">View Reports</a>
+            </th>
+            <td>
+                <a href="{% url 'admin:order_management_reports' %}" class="viewlink">View detailed order statistics and revenue reports</a>
+            </td>
+        </tr>
+    </table>
+</div>
+{% endblock %}
+
+
+
