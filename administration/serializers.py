@@ -52,3 +52,69 @@ class LoginSerializer(serializers.Serializer):
             raise serializers.ValidationError("User account is disabled")
         attrs["user"] = user
         return attrs
+
+
+class UserProfileSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = CustomUser
+        fields = (
+            "id",
+            "email",
+            "username",
+            "first_name",
+            "last_name",
+            "user_type",
+            "date_joined",
+        )
+        read_only_fields = ("id", "username", "user_type", "date_joined")
+
+    def validate_email(self, value):
+        user = self.instance
+        if CustomUser.objects.filter(email=value).exclude(id=user.id).exists():
+            raise serializers.ValidationError("This email is already in use.")
+        return value
+
+    def update(self, instance, validated_data):
+        # Auto-sync username with email when email changes
+        if 'email' in validated_data and validated_data['email'] != instance.email:
+            validated_data['username'] = validated_data['email']
+        return super().update(instance, validated_data)
+
+
+class UserProfileUpdateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = CustomUser
+        fields = (
+            "email",
+            "first_name",
+            "last_name",
+        )
+
+    def validate_email(self, value):
+        user = self.instance
+        if CustomUser.objects.filter(email=value).exclude(id=user.id).exists():
+            raise serializers.ValidationError("This email is already in use.")
+        return value
+
+    def update(self, instance, validated_data):
+        # Auto-sync username with email when email changes
+        if 'email' in validated_data and validated_data['email'] != instance.email:
+            validated_data['username'] = validated_data['email']
+        return super().update(instance, validated_data)
+
+
+class ChangePasswordSerializer(serializers.Serializer):
+    old_password = serializers.CharField(write_only=True, required=True)
+    new_password = serializers.CharField(write_only=True, required=True, min_length=8)
+    new_password_confirm = serializers.CharField(write_only=True, required=True, min_length=8)
+
+    def validate(self, attrs):
+        if attrs["new_password"] != attrs["new_password_confirm"]:
+            raise serializers.ValidationError({"new_password": "New passwords do not match"})
+        return attrs
+
+    def validate_old_password(self, value):
+        user = self.context["request"].user
+        if not user.check_password(value):
+            raise serializers.ValidationError("Old password is incorrect")
+        return value

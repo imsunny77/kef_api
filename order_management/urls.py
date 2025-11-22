@@ -5,6 +5,7 @@ from order_management.payment_views import (
     PaymentConfirmView,
     StripeWebhookView,
 )
+from order_management.cart_views import CartView, CartItemView, CartToOrderView
 
 app_name = "order_management"
 
@@ -22,4 +23,7 @@ urlpatterns = [
         name="confirm-payment",
     ),
     path("webhooks/stripe/", StripeWebhookView.as_view(), name="stripe-webhook"),
+    path("cart/", CartView.as_view(), name="cart"),
+    path("cart/items/<int:pk>/", CartItemView.as_view(), name="cart-item-detail"),
+    path("cart/checkout/", CartToOrderView.as_view(), name="cart-checkout"),
 ]

@@ -10,6 +10,7 @@ from order_management.serializers import (
     OrderCreateSerializer,
     OrderItemSerializer,
 )
+from common.email_service import send_order_confirmation_email, send_order_status_update_email
 
 
 class OrderListView(APIView):
@@ -33,6 +34,7 @@ class OrderListView(APIView):
         )
         if serializer.is_valid():
             order = serializer.save()
+            send_order_confirmation_email(order)
             response_serializer = OrderSerializer(order, context={"request": request})
             return Response(response_serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -61,11 +63,14 @@ class OrderDetailView(APIView):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
+        old_status = order.status
         serializer = OrderSerializer(
             order, data=request.data, partial=True, context={"request": request}
         )
         if serializer.is_valid():
             serializer.save()
+            if old_status != order.status:
+                send_order_status_update_email(order, old_status)
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 

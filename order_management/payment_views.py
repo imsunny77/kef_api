@@ -13,6 +13,7 @@ import requests
 from order_management.models import Order
 from order_management.serializers import OrderSerializer
 from order_management.stripe_service import confirm_payment_intent, create_customer, create_payment_intent
+from common.email_service import send_payment_confirmation_email
 
 stripe.api_key = config("STRIPE_SECRET_KEY", default="")
 
@@ -112,6 +113,7 @@ class PaymentConfirmView(APIView):
                 order.status = "completed"
                 order.save()
                 sync_to_crm(order)
+                send_payment_confirmation_email(order)
                 serializer = OrderSerializer(order, context={"request": request})
                 return Response(
                     {
@@ -189,6 +191,7 @@ class StripeWebhookView(APIView):
             order.status = "completed"
             order.save()
             sync_to_crm(order)
+            send_payment_confirmation_email(order)
         except Order.DoesNotExist:
             pass
 
