@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .header {
+            background-color: #FF9800;
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+        .content {
+            background-color: #f9f9f9;
+            padding: 20px;
+            margin-top: 20px;
+        }
+        .status-box {
+            background-color: white;
+            padding: 15px;
+            margin: 15px 0;
+            border-left: 4px solid #FF9800;
+        }
+        .status-change {
+            background-color: #fff3cd;
+            border: 1px solid #ffc107;
+            color: #856404;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 5px;
+        }
+        .status-badge {
+            display: inline-block;
+            padding: 5px 10px;
+            border-radius: 3px;
+            font-weight: bold;
+            margin: 0 5px;
+        }
+        .status-pending {
+            background-color: #ffc107;
+            color: #000;
+        }
+        .status-processing {
+            background-color: #17a2b8;
+            color: white;
+        }
+        .status-completed {
+            background-color: #28a745;
+            color: white;
+        }
+        .status-cancelled {
+            background-color: #dc3545;
+            color: white;
+        }
+        .order-info {
+            background-color: white;
+            padding: 15px;
+            margin: 15px 0;
+        }
+        .footer {
+            text-align: center;
+            margin-top: 30px;
+            color: #666;
+            font-size: 0.9em;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Order Status Update</h1>
+    </div>
+    <div class="content">
+        <p>Dear {{ customer.first_name|default:customer.email }},</p>
+        <p>We wanted to inform you that your order status has been updated.</p>
+        
+        <div class="status-change">
+            <h3>Status Change</h3>
+            {% if old_status %}
+            <p><strong>Previous Status:</strong> 
+                <span class="status-badge status-{{ old_status }}">{{ old_status|upper }}</span>
+            </p>
+            {% endif %}
+            <p><strong>Current Status:</strong> 
+                <span class="status-badge status-{{ new_status }}">{{ new_status|upper }}</span>
+            </p>
+        </div>
+
+        <div class="order-info">
+            <h2>Order Details</h2>
+            <p><strong>Order Number:</strong> {{ order.order_number }}</p>
+            <p><strong>Order Date:</strong> {{ order.created_at|date:"F d, Y" }}</p>
+            <p><strong>Total Amount:</strong> ${{ total_amount }}</p>
+        </div>
+
+        {% if new_status == 'completed' %}
+        <p>Your order has been completed! Thank you for your purchase.</p>
+        {% elif new_status == 'processing' %}
+        <p>Your order is now being processed. We will notify you once it has been shipped.</p>
+        {% elif new_status == 'cancelled' %}
+        <p>Your order has been cancelled. If you have any questions, please contact our support team.</p>
+        {% else %}
+        <p>We will keep you updated on the progress of your order.</p>
+        {% endif %}
+    </div>
+    <div class="footer">
+        <p>Thank you for shopping with us!</p>
+        <p>If you have any questions, please contact our support team.</p>
+    </div>
+</body>
+</html>
+
