@@ -21,7 +21,11 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # Environment variables
 SECRET_KEY = config("SECRET_KEY")
 DEBUG = config("DEBUG", default="True", cast=bool)
-ALLOWED_HOSTS = config("ALLOWED_HOSTS", default="", cast=lambda v: [s.strip() for s in v.split(",") if s.strip()])
+ALLOWED_HOSTS = config(
+    "ALLOWED_HOSTS",
+    default="",
+    cast=lambda v: [s.strip() for s in v.split(",") if s.strip()],
+)
 
 
 # Application definition
@@ -191,13 +195,12 @@ SIMPLE_JWT = {
     "SLIDING_TOKEN_REFRESH_LIFETIME": timedelta(days=1),
 }
 
-# CORS Configuration
+# CORS Configuration - Allow all origins
+CORS_ALLOW_ALL_ORIGINS = True
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:5174",
 ]
-
 CORS_ALLOW_CREDENTIALS = True
-
 # Email Configuration
 EMAIL_BACKEND = config(
     "EMAIL_BACKEND", default="django.core.mail.backends.console.EmailBackend"
@@ -207,4 +210,6 @@ EMAIL_PORT = config("EMAIL_PORT", default=587, cast=int)
 EMAIL_USE_TLS = config("EMAIL_USE_TLS", default=True, cast=bool)
 EMAIL_HOST_USER = config("EMAIL_HOST_USER", default="")
 EMAIL_HOST_PASSWORD = config("EMAIL_HOST_PASSWORD", default="")
-DEFAULT_FROM_EMAIL = config("DEFAULT_FROM_EMAIL", default=EMAIL_HOST_USER or "noreply@example.com")
+DEFAULT_FROM_EMAIL = config(
+    "DEFAULT_FROM_EMAIL", default=EMAIL_HOST_USER or "noreply@example.com"
+)
