@@ -17,10 +17,12 @@ Including another URLconf
 
 from django.contrib import admin
 from django.urls import path, include
+from common.views import ReportsSummaryView
 
 urlpatterns = [
     path("admin/", admin.site.urls),
     path("api/v1/auth/", include("administration.urls")),
     path("api/v1/", include("product_management.urls")),
     path("api/v1/", include("order_management.urls")),
+    path("api/v1/reports/summary/", ReportsSummaryView.as_view(), name="reports-summary"),
 ]

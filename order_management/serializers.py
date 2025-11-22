@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Order, OrderItem
+from order_management.models import Order, OrderItem
 from product_management.serializers import ProductSerializer
 
 
@@ -22,6 +22,7 @@ class OrderItemSerializer(serializers.ModelSerializer):
 class OrderSerializer(serializers.ModelSerializer):
     items = OrderItemSerializer(many=True, read_only=True)
     customer_email = serializers.EmailField(source="customer.email", read_only=True)
+    client_secret = serializers.SerializerMethodField()
 
     class Meta:
         model = Order
@@ -35,10 +36,31 @@ class OrderSerializer(serializers.ModelSerializer):
             "shipping_address",
             "billing_address",
             "items",
+            "stripe_payment_intent_id",
+            "client_secret",
+            "crm_sync_status",
             "created_at",
             "updated_at",
         )
-        read_only_fields = ("order_number", "total_amount", "created_at", "updated_at")
+        read_only_fields = (
+            "order_number",
+            "total_amount",
+            "stripe_payment_intent_id",
+            "client_secret",
+            "crm_sync_status",
+            "created_at",
+            "updated_at",
+        )
+
+    def get_client_secret(self, obj):
+        if obj.stripe_payment_intent_id:
+            try:
+                from order_management.stripe_service import confirm_payment_intent
+                intent = confirm_payment_intent(obj.stripe_payment_intent_id)
+                return intent.client_secret
+            except Exception:
+                return None
+        return None
 
     def create(self, validated_data):
         validated_data["customer"] = self.context["request"].user
@@ -99,5 +121,6 @@ class OrderCreateSerializer(serializers.Serializer):
                 price=item_data["price"],
             )
 
-        return order
+        order.calculate_total()
 
+        return order

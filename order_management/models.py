@@ -28,6 +28,7 @@ class Order(BaseModel):
     billing_address = models.TextField(blank=True)
     stripe_payment_intent_id = models.CharField(max_length=255, blank=True, null=True)
     stripe_customer_id = models.CharField(max_length=255, blank=True, null=True)
+    crm_sync_status = models.CharField(max_length=20, blank=True, null=True)
 
     class Meta:
         ordering = ["-created_at"]
